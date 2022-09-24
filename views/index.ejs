@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <title>photo editor</title>
+</head>
+
+<body>
+  <div id="main">
+    <div id="left">
+      <div id="imagediv">
+        <img src="/images/uploads/<%= filename %>" alt="">
+        <div id="undo_redo">
+          <button id="undo" class="urbtn">undo</button>
+          <button id="redo" class="urbtn">redo</button>
+        </div>
+      </div>
+      <form id="photoform" action="/photo" method="post" enctype="multipart/form-data">
+        <input id="fileinput" type="file" name="avatar" />
+      </form>
+    </div>
+    <div id="right">
+      <div id="options">
+        <button class="eopbtn" id="invert">Invert</button>
+        <button class="eopbtn" id="gray">Grayscale</button>
+        <button class="eopbtn" id="mirror">Mirror</button>
+        <button class="eopbtn" id="cover">Square image</button>
+
+        <a id="download_link" href="/images/uploads/test.jpeg" download="lo_bhaya_hogya_aapka_kam"><button id="download">Download</button></a>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    // setInterval(() => {
+    //   window.location.reload();
+    // }, 200);
+    var current_filename = '0_0';
+    var current_version = current_filename.split('_')[0];
+    var max_version = current_filename.split('_')[0];
+
+    document.querySelector('#imagediv img').addEventListener('click', function() {
+      document.querySelector("#fileinput").click();
+    })
+    document.querySelector('#fileinput').addEventListener('change', function() {
+      document.querySelector('#photoform').submit();
+    })
+
+
+    document.querySelector('#invert').addEventListener('click', function() {
+      axios.get('/invert')
+        .then(function(data) {
+          current_filename = data.data.img;
+          current_version = current_filename.split('_')[0];
+          max_version = current_filename.split('_')[0];
+
+          document.querySelector('#imagediv img').src = `/images/uploads/${data.data.img}`
+          document.querySelector('#download_link').href = `/images/uploads/${data.data.img}`
+        })
+    })
+
+    document.querySelector('#gray').addEventListener('click', function() {
+      axios.get('/gray')
+        .then(function(data) {
+          current_filename = data.data.img;
+          current_version = current_filename.split('_')[0];
+          max_version = current_filename.split('_')[0];
+
+          document.querySelector('#imagediv img').src = `/images/uploads/${data.data.img}`
+          document.querySelector('#download_link').href = `/images/uploads/${data.data.img}`
+        })
+    })
+
+    document.querySelector('#mirror').addEventListener('click', function() {
+      axios.get('/mirror')
+        .then(function(data) {
+          current_filename = data.data.img;
+          current_version = current_filename.split('_')[0];
+          max_version = current_filename.split('_')[0];
+
+          document.querySelector('#imagediv img').src = `/images/uploads/${data.data.img}`
+          document.querySelector('#download_link').href = `/images/uploads/${data.data.img}`
+        })
+    })
+
+    document.querySelector('#cover').addEventListener('click', function() {
+      axios.get('/cover')
+        .then(function(data) {
+          current_filename = data.data.img;
+          current_version = current_filename.split('_')[0];
+          max_version = current_filename.split('_')[0];
+
+          document.querySelector('#imagediv img').src = `/images/uploads/${data.data.img}`
+          document.querySelector('#download_link').href = `/images/uploads/${data.data.img}`
+        })
+    })
+
+    // sasta undo redo
+
+    document.querySelector("#undo").addEventListener('click', function() {
+      // console.log(current_version)
+      if (current_version != '0') {
+        current_version--;
+        document.querySelector('#imagediv img').src = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
+        document.querySelector('#download_link').href = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
+      }
+    })
+
+    document.querySelector("#redo").addEventListener('click', function() {
+      // console.log(current_version)
+      if (current_version < max_version) {
+        current_version++;
+        document.querySelector('#imagediv img').src = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
+        document.querySelector('#download_link').href = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
+      }
+    })
+  </script>
+</body>
+
+</html>
