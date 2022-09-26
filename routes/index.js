@@ -24,6 +24,11 @@ var filename = "placeholder.jpg"
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
+  filename = "placeholder.jpg";
+  res.render('index', { filename });
+});
+
+router.get('/notindex', function (req, res, next) {
   res.render('index', { filename });
 });
 
@@ -31,25 +36,16 @@ router.post('/photo', upload.single('avatar'), function (req, res, next) {
   // res.render('index', {filename: req.file.filename});
   filename = req.file.filename;
   steps = [];
-  gray= 0;
+  gray = 0;
+  counter = 0;
   steps.push(filename);
   console.log(steps);
-  res.redirect('back');   
+  res.redirect('/notindex');
 })
 
 // jimp stuff
 
 router.get('/invert', async function (req, res, next) {
-  // jimp.read(`./public/images/uploads/test.jpeg`)
-  // .then(image => {
-  //   image
-  //     .invert()
-  //     .write('./public/images/uploads/edited.jpeg');
-  // })
-  // .catch(err => {
-  //   console.log(err)
-  // });
-
   image = await jimp.read(`./public/images/uploads/${filename}`);
   counter++
   var new_name = `${counter}_${filename.split('_')[1]}`;
@@ -70,7 +66,7 @@ router.get('/gray', async function (req, res, next) {
 
     filename = new_name;
     steps.push(filename);
-    gray = 1;
+    gray = 1; 
   }
   console.log(steps);
   res.json({ img: filename })
@@ -101,9 +97,16 @@ router.get('/cover', async function (req, res, next) {
   steps.push(filename);
 
   console.log(steps);
-  res.json({ img: filename }) 
- 
+  res.json({ img: filename })
+
 })
 
-module.exports = router;          
- 
+router.get('/version/:version', function (req, res, next) {
+  // counter = req.params.version;
+  // counter = parseInt(steps[steps.length - 1].split('_')[0]);
+  filename = req.params.version + '_' + filename.split('_')[1];
+  // console.log(counter)
+  res.json({ hey: "hey" })  
+})
+
+module.exports = router;     

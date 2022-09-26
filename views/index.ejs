@@ -100,22 +100,21 @@
     })
 
     // sasta undo redo
-
     document.querySelector("#undo").addEventListener('click', function() {
-      // console.log(current_version)
       if (current_version != '0') {
         current_version--;
         document.querySelector('#imagediv img').src = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
         document.querySelector('#download_link').href = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
+        axios.get(`/version/${current_version}`)
       }
     })
 
     document.querySelector("#redo").addEventListener('click', function() {
-      // console.log(current_version)
       if (current_version < max_version) {
         current_version++;
         document.querySelector('#imagediv img').src = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
         document.querySelector('#download_link').href = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
+        axios.get(`/version/${current_version}`)
       }
     })
   </script>
