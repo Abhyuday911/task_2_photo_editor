@@ -20,7 +20,7 @@ const upload = multer({ storage: storage })
 var steps = [];
 var counter = 0;
 var gray = 0;
-var filename = "placeholder.jpg"
+var filename = "placeholder.jpg";
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -80,11 +80,11 @@ router.get('/mirror', async function (req, res, next) {
   await image.mirror(true, false).write(`./public/images/uploads/${new_name}`);
 
   filename = new_name;
-  steps.push(filename);
+  steps.push(filename);    
 
   console.log(steps);
-  res.json({ img: filename })  
-
+  res.json({ img: filename })    
+  
 })
 
 router.get('/cover', async function (req, res, next) {
@@ -97,7 +97,7 @@ router.get('/cover', async function (req, res, next) {
   steps.push(filename);
 
   console.log(steps);
-  res.json({ img: filename })
+  res.json({ img: filename })  
 
 })
 
@@ -105,8 +105,8 @@ router.get('/version/:version', function (req, res, next) {
   // counter = req.params.version;
   // counter = parseInt(steps[steps.length - 1].split('_')[0]);
   filename = req.params.version + '_' + filename.split('_')[1];
-  // console.log(counter)
+  console.log(req.params.version)
   res.json({ hey: "hey" })  
 })
 
-module.exports = router;     
+module.exports = router;

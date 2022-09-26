@@ -29,6 +29,7 @@
         <button class="eopbtn" id="gray">Grayscale</button>
         <button class="eopbtn" id="mirror">Mirror</button>
         <button class="eopbtn" id="cover">Square image</button>
+        <!-- <div class="eopbtn"><p>ye kuch karega</p><input type="range"></div> -->
 
         <a id="download_link" href="/images/uploads/test.jpeg" download="lo_bhaya_hogya_aapka_kam"><button id="download">Download</button></a>
       </div>
@@ -42,6 +43,8 @@
     var current_filename = '0_0';
     var current_version = current_filename.split('_')[0];
     var max_version = current_filename.split('_')[0];
+    var version_history = ['0'];
+    var undo_redo_counter;
 
     document.querySelector('#imagediv img').addEventListener('click', function() {
       document.querySelector("#fileinput").click();
@@ -53,68 +56,58 @@
 
     document.querySelector('#invert').addEventListener('click', function() {
       axios.get('/invert')
-        .then(function(data) {
-          current_filename = data.data.img;
-          current_version = current_filename.split('_')[0];
-          max_version = current_filename.split('_')[0];
-
-          document.querySelector('#imagediv img').src = `/images/uploads/${data.data.img}`
-          document.querySelector('#download_link').href = `/images/uploads/${data.data.img}`
-        })
+        .then(fthen)
     })
-
     document.querySelector('#gray').addEventListener('click', function() {
       axios.get('/gray')
-        .then(function(data) {
-          current_filename = data.data.img;
-          current_version = current_filename.split('_')[0];
-          max_version = current_filename.split('_')[0];
-
-          document.querySelector('#imagediv img').src = `/images/uploads/${data.data.img}`
-          document.querySelector('#download_link').href = `/images/uploads/${data.data.img}`
-        })
+        .then(fthen)
     })
-
     document.querySelector('#mirror').addEventListener('click', function() {
       axios.get('/mirror')
-        .then(function(data) {
-          current_filename = data.data.img;
-          current_version = current_filename.split('_')[0];
-          max_version = current_filename.split('_')[0];
-
-          document.querySelector('#imagediv img').src = `/images/uploads/${data.data.img}`
-          document.querySelector('#download_link').href = `/images/uploads/${data.data.img}`
-        })
+        .then(fthen)
     })
-
     document.querySelector('#cover').addEventListener('click', function() {
       axios.get('/cover')
-        .then(function(data) {
-          current_filename = data.data.img;
-          current_version = current_filename.split('_')[0];
-          max_version = current_filename.split('_')[0];
-
-          document.querySelector('#imagediv img').src = `/images/uploads/${data.data.img}`
-          document.querySelector('#download_link').href = `/images/uploads/${data.data.img}`
-        })
+        .then(fthen)
     })
+
+    function fthen(data) {
+      current_filename = data.data.img;
+      current_version = current_filename.split('_')[0];
+      max_version = current_filename.split('_')[0];
+      version_history.push(current_version);
+      console.log(version_history);
+      undo_redo_counter = version_history.length - 1;
+      console.log(undo_redo_counter);
+
+      document.querySelector('#imagediv img').src = `/images/uploads/${data.data.img}`;
+      document.querySelector('#download_link').href = `/images/uploads/${data.data.img}`;
+    }
 
     // sasta undo redo
     document.querySelector("#undo").addEventListener('click', function() {
-      if (current_version != '0') {
-        current_version--;
-        document.querySelector('#imagediv img').src = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
-        document.querySelector('#download_link').href = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
-        axios.get(`/version/${current_version}`)
+      if (version_history[undo_redo_counter] != 0) {
+        // current_version--;
+        undo_redo_counter--;
+        version_history.push(version_history[undo_redo_counter]);
+        console.log(version_history)
+        console.log(undo_redo_counter)
+        document.querySelector('#imagediv img').src = `/images/uploads/${version_history[undo_redo_counter]}_${current_filename.split('_')[1]}`;
+        document.querySelector('#download_link').href = `/images/uploads/${version_history[undo_redo_counter]}_${current_filename.split('_')[1]}`;
+        axios.get(`/version/${version_history[undo_redo_counter]}`)
       }
     })
 
     document.querySelector("#redo").addEventListener('click', function() {
       if (current_version < max_version) {
-        current_version++;
-        document.querySelector('#imagediv img').src = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
-        document.querySelector('#download_link').href = `/images/uploads/${current_version}_${current_filename.split('_')[1]}`;
-        axios.get(`/version/${current_version}`)
+        // current_version++;
+        undo_redo_counter++
+        version_history.push(version_history[undo_redo_counter]);
+        console.log(version_history);
+        console.log(undo_redo_counter)
+        document.querySelector('#imagediv img').src = `/images/uploads/${version_history[undo_redo_counter]}_${current_filename.split('_')[1]}`;
+        document.querySelector('#download_link').href = `/images/uploads/${version_history[undo_redo_counter]}_${current_filename.split('_')[1]}`;
+        axios.get(`/version/${version_history[undo_redo_counter]}`)
       }
     })
   </script>
