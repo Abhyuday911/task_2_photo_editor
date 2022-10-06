@@ -97,7 +97,35 @@ router.get('/cover', async function (req, res, next) {
   steps.push(filename);
 
   console.log(steps);
-  res.json({ img: filename })  
+  res.json({ img: filename })   
+
+})
+
+router.get('/rotate', async function (req, res, next) {
+  image = await jimp.read(`./public/images/uploads/${filename}`);
+  counter++
+  var new_name = `${counter}_${filename.split('_')[1]}`;
+  await image.rotate(90,false).write(`./public/images/uploads/${new_name}`);
+
+  filename = new_name;
+  steps.push(filename);
+
+  console.log(steps);
+  res.json({ img: filename })   
+
+})
+
+router.get('/fish', async function (req, res, next) {
+  image = await jimp.read(`./public/images/uploads/${filename}`);
+  counter++
+  var new_name = `${counter}_${filename.split('_')[1]}`;
+  await image.fisheye({ r: 1.6 }).write(`./public/images/uploads/${new_name}`);
+
+  filename = new_name;
+  steps.push(filename);
+
+  console.log(steps);
+  res.json({ img: filename })   
 
 })
 
@@ -109,4 +137,7 @@ router.get('/version/:version', function (req, res, next) {
   res.json({ hey: "hey" })  
 })
 
-module.exports = router;
+module.exports = router; 
+
+// in undo redo, redu needs to stop at the point where the undo started;
+
